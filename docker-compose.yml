@@ -17,7 +17,7 @@ services:
     environment:
       TZ: Europe/Dublin
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/v1/models')"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -35,7 +35,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: Europe/Dublin
-      PERPLEXITY_SESSION_TOKEN: your_token_here
+      # Set this in ZimaOS (or .env) before starting the stack.
+      PERPLEXITY_SESSION_TOKEN: ${PERPLEXITY_SESSION_TOKEN}
     logging:
       driver: json-file
       options:
