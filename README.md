@@ -52,11 +52,11 @@ docker run --rm -p 8000:8000 \
   ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest
 ```
 
-Authentication is request-based (OpenAI style). Send your Perplexity session token using an `Authorization` header in bearer format.
+Authentication is request-based (OpenAI style). Send your Perplexity session token using `Authorization: ******`.
 
 ```bash
 curl http://localhost:8000/v1/chat/completions \
-  -H "Authorization: <BEARER_TOKEN_HEADER_VALUE>" \
+  -H "Authorization: ******" \
   -H "Content-Type: application/json" \
   -d '{"model":"perplexity/best","messages":[{"role":"user","content":"Hello!"}]}'
 ```
@@ -92,10 +92,10 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 ## Environment variables
 
-| Variable                   | API image | MCP image | Required for use | Description                               |
-| -------------------------- | --------- | --------- | ---------------- | ----------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | No        | Yes       | Yes              | Perplexity session token for MCP requests |
-| `TZ`                       | No        | No        | No               | Container timezone (example: `UTC`)       |
+| Variable                   | API image | MCP image | Required when used | Description                               |
+| -------------------------- | --------- | --------- | ------------------ | ----------------------------------------- |
+| `PERPLEXITY_SESSION_TOKEN` | No        | Yes       | Yes                | Perplexity session token for MCP requests |
+| `TZ`                       | No        | No        | No                 | Container timezone (example: `UTC`)       |
 
 ## OpenAI-Compatible API endpoints
 
