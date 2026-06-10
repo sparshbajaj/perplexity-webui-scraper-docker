@@ -48,7 +48,7 @@ docker pull ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:mcp
 ```bash
 # Exposes API at http://localhost:8000
 docker run --rm -p 8000:8000 \
-  -e TZ=Europe/Dublin \
+  -e TZ=UTC \
   ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest
 ```
 
@@ -87,10 +87,10 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 ## Environment variables
 
-| Variable                   | Required | Description                               |
-| -------------------------- | -------- | ----------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | MCP only | Perplexity session token for MCP requests |
-| `TZ`                       | Optional | Container timezone (example: `UTC`)       |
+| Variable                   | Required | Description                                                                 |
+| -------------------------- | -------- | --------------------------------------------------------------------------- |
+| `PERPLEXITY_SESSION_TOKEN` | Yes      | Required in API requests (`Authorization` header) and MCP container env var |
+| `TZ`                       | Optional | Container timezone (example: `UTC`)                                         |
 
 ## OpenAI-Compatible API endpoints
 
