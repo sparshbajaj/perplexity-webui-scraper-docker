@@ -5,7 +5,7 @@ on:
     branches:
       - prod
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 env:
@@ -27,7 +27,7 @@ jobs:
         id: source
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
             echo "repository=${{ env.UPSTREAM_REPO }}" >> "$GITHUB_OUTPUT"
             echo "ref=${{ env.UPSTREAM_BRANCH }}" >> "$GITHUB_OUTPUT"
           else
@@ -40,6 +40,13 @@ jobs:
         with:
           repository: ${{ steps.source.outputs.repository }}
           ref: ${{ steps.source.outputs.ref }}
+
+      - name: Capture source commit
+        id: sha
+        shell: bash
+        run: |
+          echo "full_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -57,7 +64,35 @@ jobs:
       - name: Normalize image repository
         id: repo
         shell: bash
-        run: echo "image_repo=${{ env.REGISTRY }}/$(echo '${{ env.IMAGE_NAME }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+        run: |
+          image_name="$(echo '${{ env.IMAGE_NAME }}' | tr '[:upper:]' '[:lower:]')"
+          echo "image_repo=${{ env.REGISTRY }}/${image_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Check if commit image already exists
+        id: existing
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          api_tag="sha-${{ steps.sha.outputs.short_sha }}"
+          mcp_tag="sha-${{ steps.sha.outputs.short_sha }}-mcp"
+
+          api_exists=false
+          mcp_exists=false
+
+          if docker buildx imagetools inspect "${{ steps.repo.outputs.image_repo }}:${api_tag}" >/dev/null 2>&1; then
+            api_exists=true
+          fi
+
+          if docker buildx imagetools inspect "${{ steps.repo.outputs.image_repo }}:${mcp_tag}" >/dev/null 2>&1; then
+            mcp_exists=true
+          fi
+
+          if [[ "${api_exists}" == "true" && "${mcp_exists}" == "true" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Image tags ${api_tag} and ${mcp_tag} already exist, skipping scheduled rebuild."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Docker metadata (API)
         id: meta_api
@@ -66,9 +101,13 @@ jobs:
           images: ${{ steps.repo.outputs.image_repo }}
           tags: |
             type=raw,value=latest
-            type=sha,format=short,prefix=sha-
+            type=raw,value=sha-${{ steps.sha.outputs.short_sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ steps.source.outputs.repository }}
+            org.opencontainers.image.revision=${{ steps.sha.outputs.full_sha }}
 
       - name: Build and push Docker image (API)
+        if: github.event_name != 'schedule' || steps.existing.outputs.skip != 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -77,8 +116,8 @@ jobs:
           push: true
           tags: ${{ steps.meta_api.outputs.tags }}
           labels: ${{ steps.meta_api.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ steps.repo.outputs.image_repo }}:buildcache
+          cache-to: type=registry,ref=${{ steps.repo.outputs.image_repo }}:buildcache,mode=max
 
       - name: Docker metadata (MCP)
         id: meta_mcp
@@ -87,9 +126,13 @@ jobs:
           images: ${{ steps.repo.outputs.image_repo }}
           tags: |
             type=raw,value=mcp
-            type=sha,format=short,prefix=sha-,suffix=-mcp
+            type=raw,value=sha-${{ steps.sha.outputs.short_sha }}-mcp
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ steps.source.outputs.repository }}
+            org.opencontainers.image.revision=${{ steps.sha.outputs.full_sha }}
 
       - name: Build and push Docker image (MCP)
+        if: github.event_name != 'schedule' || steps.existing.outputs.skip != 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -98,5 +141,5 @@ jobs:
           push: true
           tags: ${{ steps.meta_mcp.outputs.tags }}
           labels: ${{ steps.meta_mcp.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-mcp
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-mcp,mode=max
+          cache-from: type=registry,ref=${{ steps.repo.outputs.image_repo }}:buildcache-mcp
+          cache-to: type=registry,ref=${{ steps.repo.outputs.image_repo }}:buildcache-mcp,mode=max
