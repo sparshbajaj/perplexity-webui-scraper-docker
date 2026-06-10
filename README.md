@@ -54,12 +54,7 @@ docker run --rm -p 8000:8000 \
 
 Authentication is request-based (OpenAI style). Send your Perplexity session token in the `Authorization` header with bearer format.
 
-```bash
-curl http://localhost:8000/v1/chat/completions \
-  -H "Authorization: ******" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"perplexity/best","messages":[{"role":"user","content":"Hello!"}]}'
-```
+Use your client to call `http://localhost:8000/v1/chat/completions` and include the authorization header with your session token.
 
 ### 4. Run the MCP container
 
