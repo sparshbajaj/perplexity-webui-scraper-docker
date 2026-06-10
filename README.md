@@ -52,11 +52,11 @@ docker run --rm -p 8000:8000 \
   ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest
 ```
 
-Authentication is request-based (OpenAI style). Send your Perplexity session token using `Authorization: ******`.
+Authentication is request-based (OpenAI style). Send your Perplexity session token in the `Authorization` header.
 
 ```bash
 curl http://localhost:8000/v1/chat/completions \
-  -H "Authorization: ******" \
+  -H "Authorization: YOUR_SESSION_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"model":"perplexity/best","messages":[{"role":"user","content":"Hello!"}]}'
 ```
