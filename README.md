@@ -35,8 +35,8 @@ This library lets you interact with Perplexity AI programmatically using the sam
 
 ### 2. Published Images
 
-- API image: `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest`
-- MCP image: `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:mcp`
+- API image (OpenAI-compatible REST server): `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest`
+- MCP image (MCP stdio server): `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:mcp`
 
 ```bash
 docker pull ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest
@@ -87,10 +87,10 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 ## Environment variables
 
-| Variable                   | Required | Description                                                                 |
-| -------------------------- | -------- | --------------------------------------------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | Yes      | Required in API requests (`Authorization` header) and MCP container env var |
-| `TZ`                       | Optional | Container timezone (example: `UTC`)                                         |
+| Variable                   | Where required                                 | Description                                              |
+| -------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| `PERPLEXITY_SESSION_TOKEN` | API requests (`Authorization`) and MCP runtime | Perplexity session token used for authenticated requests |
+| `TZ`                       | Optional                                       | Container timezone (example: `UTC`)                      |
 
 ## OpenAI-Compatible API endpoints
 
