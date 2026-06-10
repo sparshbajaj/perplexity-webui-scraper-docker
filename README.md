@@ -56,7 +56,7 @@ Authentication is request-based (OpenAI style). Send your Perplexity session tok
 
 ```bash
 curl http://localhost:8000/v1/chat/completions \
-  -H "Authorization: <your_auth_header_value>" \
+  -H "Authorization: PERPLEXITY_SESSION_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"model":"perplexity/best","messages":[{"role":"user","content":"Hello!"}]}'
 ```
@@ -94,7 +94,7 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 | Variable                   | API image | MCP image | Required | Description                               |
 | -------------------------- | --------- | --------- | -------- | ----------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | No        | Yes       | MCP: Yes | Perplexity session token for MCP requests |
+| `PERPLEXITY_SESSION_TOKEN` | No        | Yes       | Yes      | Perplexity session token for MCP requests |
 | `TZ`                       | No        | No        | No       | Container timezone (example: `UTC`)       |
 
 ## OpenAI-Compatible API endpoints
