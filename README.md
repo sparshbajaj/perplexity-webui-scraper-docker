@@ -66,6 +66,7 @@ docker run --rm -i \
 ```
 
 `PERPLEXITY_SESSION_TOKEN` is required for MCP mode.
+MCP uses stdio, so keep stdin attached (`-i`) and do not run MCP as a detached daemon.
 
 ## Docker Compose
 
@@ -75,9 +76,9 @@ This repo includes a `docker-compose.yml` file in the repository root with both 
 # API only
 docker compose up -d perplexity-api
 
-# MCP only (set token first)
+# MCP only (set token first) — keep attached (no -d) for stdio transport
 export PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
-docker compose up -d perplexity-mcp
+docker compose up perplexity-mcp
 ```
 
 You can also place the token in a local `.env` file:

@@ -39,6 +39,7 @@ services:
     pull_policy: always
     container_name: perplexity-mcp
     restart: unless-stopped
+    stdin_open: true
     environment:
       TZ: Europe/Dublin
       # Set this in ZimaOS (or .env) before starting the stack.
