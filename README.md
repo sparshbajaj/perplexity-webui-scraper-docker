@@ -33,7 +33,7 @@ This library lets you interact with Perplexity AI programmatically using the sam
 - A Perplexity Pro/Max account
 - Your `__Secure-next-auth.session-token` from `perplexity.ai`
 
-### 2. Published images
+### 2. Published Images
 
 - API image: `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:latest`
 - MCP image: `ghcr.io/sparshbajaj/perplexity-webui-scraper-docker:mcp`
@@ -68,7 +68,7 @@ docker run --rm -i \
 
 ## Docker Compose
 
-This repo includes `/docker-compose.yml` with both services:
+This repo includes a `docker-compose.yml` file in the repository root with both services:
 
 ```bash
 # API only
@@ -87,10 +87,10 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 ## Environment variables
 
-| Variable                   | API image | MCP image | Required for API | Required for MCP | Description                               |
-| -------------------------- | --------- | --------- | ---------------- | ---------------- | ----------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | No        | Yes       | No               | Yes              | Perplexity session token for MCP requests |
-| `TZ`                       | No        | No        | No               | No               | Container timezone (example: `UTC`)       |
+| Variable                   | Required | Description                               |
+| -------------------------- | -------- | ----------------------------------------- |
+| `PERPLEXITY_SESSION_TOKEN` | MCP only | Perplexity session token for MCP requests |
+| `TZ`                       | Optional | Container timezone (example: `UTC`)       |
 
 ## OpenAI-Compatible API endpoints
 
