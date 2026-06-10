@@ -53,6 +53,7 @@ docker run --rm -p 8000:8000 \
 ```
 
 Authentication is request-based (OpenAI style). Send your Perplexity session token in the `Authorization` header with bearer format.
+Example token format: `SESSION_TOKEN_VALUE`.
 
 Use your client to call `http://localhost:8000/v1/chat/completions` and include the authorization header with your session token.
 
@@ -87,10 +88,10 @@ PERPLEXITY_SESSION_TOKEN=YOUR_SESSION_TOKEN
 
 ## Environment variables
 
-| Variable                   | Where required                                 | Description                                              |
-| -------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
-| `PERPLEXITY_SESSION_TOKEN` | API requests (`Authorization`) and MCP runtime | Perplexity session token used for authenticated requests |
-| `TZ`                       | Optional                                       | Container timezone (example: `UTC`)                      |
+| Variable                   | Where required               | Description                                                              |
+| -------------------------- | ---------------------------- | ------------------------------------------------------------------------ |
+| `PERPLEXITY_SESSION_TOKEN` | API requests and MCP runtime | API: sent in `Authorization` header. MCP: set as container env variable. |
+| `TZ`                       | Optional                     | Container timezone (example: `UTC`)                                      |
 
 ## OpenAI-Compatible API endpoints
 
