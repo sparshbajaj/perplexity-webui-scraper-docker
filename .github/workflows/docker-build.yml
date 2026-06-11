@@ -48,6 +48,19 @@ jobs:
           echo "full_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "short_sha=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Resolve API build file
+        id: api_build
+        shell: bash
+        run: |
+          if [[ -f Dockerfile ]]; then
+            echo "file=./Dockerfile" >> "$GITHUB_OUTPUT"
+          elif [[ -f Containerfile ]]; then
+            echo "file=./Containerfile" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::No API build file found. Expected Dockerfile or Containerfile in repository root."
+            exit 1
+          fi
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -111,7 +124,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ${{ steps.api_build.outputs.file }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta_api.outputs.tags }}
